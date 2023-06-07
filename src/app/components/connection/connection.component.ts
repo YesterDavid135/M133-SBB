@@ -14,8 +14,8 @@ import {LocationsApiModel} from "../../Model/LocationsApiModel";
 
 export class ConnectionComponent implements OnInit {
 
-  fromFormControl = new FormControl('');
-  toFormControl = new FormControl('');
+  fromFormControl = new FormControl("");
+  toFormControl = new FormControl("");
 
   optionsFrom: Observable<string[]> = new Observable<string[]>();
   optionsTo: Observable<string[]> = new Observable<string[]>();
@@ -23,6 +23,13 @@ export class ConnectionComponent implements OnInit {
   staticOptions: string[] = ['Basel', 'Bern', 'Luzern'];
 
   ngOnInit() {
+
+    if (localStorage.getItem("searchFrom") && localStorage.getItem("searchTo")) {
+      this.fromFormControl = new FormControl(localStorage.getItem("searchFrom"));
+      this.toFormControl = new FormControl(localStorage.getItem("searchTo"));
+      this.searchConnection()
+    }
+
     this.optionsFrom = this.fromFormControl.valueChanges.pipe(
       startWith(this.fromFormControl.value),
       debounceTime(500),
@@ -64,8 +71,10 @@ export class ConnectionComponent implements OnInit {
   searchConnection() {
     if (this.fromFormControl.value && this.toFormControl.value) {
       this.searchedFrom = this.fromFormControl.value;
-
       this.searchedTo = this.toFormControl.value;
+      localStorage.setItem('searchFrom', this.searchedFrom);
+      localStorage.setItem('searchTo', this.searchedTo);
+
       this.connections = null;
       this.isLoading = true;
       this.apiService.getConnection(this.searchedFrom, this.searchedTo, 0).subscribe(data => {
