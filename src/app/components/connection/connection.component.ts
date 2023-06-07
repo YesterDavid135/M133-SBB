@@ -1,6 +1,9 @@
 import {Component, OnInit} from '@angular/core';
 import {ApiService} from "../../services/api.service";
 import {Connection} from "../../Model/ConnectionApiModel";
+import {debounceTime, distinctUntilChanged, map, Observable, startWith, switchMap} from "rxjs";
+import {FormControl} from "@angular/forms";
+import {LocationsApiModel} from "../../Model/LocationsApiModel";
 
 
 @Component({
@@ -10,15 +13,44 @@ import {Connection} from "../../Model/ConnectionApiModel";
 })
 
 export class ConnectionComponent implements OnInit {
+
+  fromFormControl = new FormControl('');
+  toFormControl = new FormControl('');
+
+  optionsFrom: Observable<string[]> = new Observable<string[]>();
+  optionsTo: Observable<string[]> = new Observable<string[]>();
+
+  staticOptions: string[] = ['Basel', 'Bern', 'Luzern'];
+
   ngOnInit() {
+    this.optionsFrom = this.fromFormControl.valueChanges.pipe(
+      startWith(this.fromFormControl.value),
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap((newValue) =>
+        !newValue || newValue.length < 2
+          ? []
+          : this.apiService.autoComplete(newValue)
+      ),
+      map((response: LocationsApiModel) => response.stations.map(station => station.name))
+    );
+
+    this.optionsTo = this.toFormControl.valueChanges.pipe(
+      startWith(this.toFormControl.value),
+      debounceTime(500),
+      distinctUntilChanged(),
+      switchMap((newValue) =>
+        !newValue || newValue.length < 2
+          ? []
+          : this.apiService.autoComplete(newValue)
+      ),
+      map((response: LocationsApiModel) => response.stations.map(station => station.name))
+    );
   }
 
 
   constructor(private apiService: ApiService) {
   }
-
-  searchFrom: string = "";
-  searchTo: string = "";
 
   connections: Connection[] | null = null;
   isLoading: boolean = false;
@@ -30,15 +62,18 @@ export class ConnectionComponent implements OnInit {
   newestPage = 0;
 
   searchConnection() {
-    this.searchedFrom = this.searchFrom
-    this.searchedTo = this.searchTo
-    this.connections = null;
-    this.isLoading = true;
-    this.apiService.getConnection(this.searchedFrom, this.searchedTo, 0).subscribe(data => {
-      this.connections = data.connections;
-      console.log(data.connections);
-      this.isLoading = false
-    });
+    if (this.fromFormControl.value && this.toFormControl.value) {
+      this.searchedFrom = this.fromFormControl.value;
+
+      this.searchedTo = this.toFormControl.value;
+      this.connections = null;
+      this.isLoading = true;
+      this.apiService.getConnection(this.searchedFrom, this.searchedTo, 0).subscribe(data => {
+        this.connections = data.connections;
+        console.log(data.connections);
+        this.isLoading = false
+      });
+    }
   }
 
   loadEarlier() {
@@ -63,7 +98,4 @@ export class ConnectionComponent implements OnInit {
       });
   }
 
-  autoCompleteFrom() {
-
-  }
 }

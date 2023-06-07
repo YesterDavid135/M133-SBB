@@ -1,11 +1,17 @@
 <div class="container">
   <sbb-form-field label="from">
-    <input sbbInput type="text" (ngModelChange)="autoCompleteFrom()" [(ngModel)]="searchFrom"/>
+    <input [formControl]="fromFormControl" [sbbAutocomplete]="autoFrom" sbbInput type="text"/>
   </sbb-form-field>
+  <sbb-autocomplete #autoFrom="sbbAutocomplete">
+    <sbb-option *ngFor="let option of optionsFrom | async" [value]="option">{{ option }}</sbb-option>
+  </sbb-autocomplete>
 
-  <sbb-form-field label="to" class="p-2">
-    <input sbbInput type="text" [(ngModel)]="searchTo"/>
+  <sbb-form-field label="to">
+    <input [formControl]="toFormControl" [sbbAutocomplete]="autoTo" sbbInput type="text"/>
   </sbb-form-field>
+  <sbb-autocomplete #autoTo="sbbAutocomplete">
+    <sbb-option *ngFor="let option of optionsTo | async" [value]="option">{{ option }}</sbb-option>
+  </sbb-autocomplete>
 
   <button (click)="searchConnection()" type="button" sbb-button [disabled]="false">Search for connection</button>
 </div>
