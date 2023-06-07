@@ -98,4 +98,25 @@ export class ConnectionComponent implements OnInit {
       });
   }
 
+  getIcon(connection: Connection) {
+    if (connection.from.platform) {
+      if (connection.from.platform.match(/\d/)) { // @ts-ignore
+        return "picto:tracks-" + connection.from.platform.match(/\d+/)[0] + "-de-small";
+      }
+      if (connection.from.platform.match(/[a-zA-Z]/)) { // @ts-ignore
+        return "picto:stands-" + connection.from.platform.toLowerCase() + "-de-small";
+      }
+
+    }
+    if (connection.sections[0].journey && connection.sections[0].journey.category) {
+      let category = connection.sections[0].journey.category
+      if (category == "B")
+        return "picto:bus-right"
+      if (category == "T")
+        return "picto:tram-right"
+    }
+    return "picto:accessible-right-framed";
+  }
+
+
 }

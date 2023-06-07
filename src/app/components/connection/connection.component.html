@@ -27,7 +27,7 @@
       <sbb-expansion-panel *ngFor="let connection of connections">
         <sbb-expansion-panel-header class="p-2">
           <div class="connection">
-            <div class="platform">{{connection.from.platform}}</div>
+            <sbb-icon svgIcon="{{getIcon(connection)}}" class="sbb-icon-fit"></sbb-icon>
             <div class="info">
               <b><span id="train_type"> {{connection.products[0]}}</span></b> Direction <span id="destination">
           {{connection.sections[0].journey.to}}
@@ -41,6 +41,7 @@
         <table class="table">
           <thead>
           <tr>
+            <th scope="col">Product</th>
             <th scope="col">From</th>
             <th scope="col">Departure</th>
             <th scope="col">To</th>
@@ -49,6 +50,8 @@
           </thead>
           <tbody>
           <tr *ngFor="let section of connection.sections">
+            <td *ngIf="section.journey">{{section.journey.category}}{{section.journey.number}}</td>
+            <td *ngIf="section.walk">Walk</td>
             <td>{{section.departure.station.name}}
               <ng-container *ngIf="section.departure.platform">(Pl. {{section.departure.platform}})</ng-container>
             </td>
