@@ -1,70 +1,94 @@
-<div class="container">
-  <sbb-form-field label="from">
-    <input [formControl]="fromFormControl" [sbbAutocomplete]="autoFrom" sbbInput type="text"/>
-  </sbb-form-field>
-  <sbb-autocomplete #autoFrom="sbbAutocomplete">
-    <sbb-option *ngFor="let option of optionsFrom | async" [value]="option">{{ option }}</sbb-option>
-  </sbb-autocomplete>
+<div class="pt-4">
+  <div class="container">
+    <div class="d-flex p-2 justify-content-center">
+      <sbb-form-field label="from" class="px-3">
+        <input [formControl]="fromFormControl" [sbbAutocomplete]="autoFrom" sbbInput type="text"/>
+      </sbb-form-field>
+      <sbb-autocomplete #autoFrom="sbbAutocomplete">
+        <sbb-option *ngFor="let option of optionsFrom | async" [value]="option">{{ option }}</sbb-option>
+      </sbb-autocomplete>
 
-  <sbb-form-field label="to">
-    <input [formControl]="toFormControl" [sbbAutocomplete]="autoTo" sbbInput type="text"/>
-  </sbb-form-field>
-  <sbb-autocomplete #autoTo="sbbAutocomplete">
-    <sbb-option *ngFor="let option of optionsTo | async" [value]="option">{{ option }}</sbb-option>
-  </sbb-autocomplete>
+      <sbb-form-field label="to" class="px-3">
+        <input [formControl]="toFormControl" [sbbAutocomplete]="autoTo" sbbInput type="text"/>
+      </sbb-form-field>
+      <sbb-autocomplete #autoTo="sbbAutocomplete">
+        <sbb-option *ngFor="let option of optionsTo | async" [value]="option">{{ option }}</sbb-option>
+      </sbb-autocomplete>
 
-  <button (click)="searchConnection()" type="button" sbb-button [disabled]="false">Search for connection</button>
-</div>
 
-<div class="loading">
-  <sbb-loading-indicator *ngIf="isLoading" mode="fullbox" aria-label="Loading, please wait"></sbb-loading-indicator>
-</div>
-<ng-container *ngIf="connections">
-  <div class="container p-lg-3">
-    <button type="button" sbb-frameless-button (click)="loadEarlier()">Earlier Connections</button>
+    </div>
+    <div class="d-flex p-2 justify-content-center">
 
-    <sbb-accordion>
-      <sbb-expansion-panel *ngFor="let connection of connections">
-        <sbb-expansion-panel-header class="p-2">
-          <div class="connection">
-            <sbb-icon svgIcon="{{getIcon(connection)}}" class="sbb-icon-fit"></sbb-icon>
-            <div class="info">
-              <b><span id="train_type"> {{connection.products[0]}}</span></b> Direction <span id="destination">
+      <sbb-datepicker arrows class="mx-3">
+        <input sbbDateInput [(ngModel)]="date"/>
+      </sbb-datepicker>
+
+      <input sbbTimeInput [(ngModel)]="time" class="mx-3"/>
+
+      <button (click)="searchConnection()" type="button" sbb-button
+              [disabled]="false" class="mx-3">Search for
+        connection
+      </button>
+    </div>
+  </div>
+
+  <div class="loading">
+    <sbb-loading-indicator *ngIf="isLoading" mode="fullbox" aria-label="Loading, please wait"></sbb-loading-indicator>
+  </div>
+  <ng-container *ngIf="connections.length > 0">
+    <div class="container p-lg-3">
+      <button type="button" sbb-frameless-button (click)="loadEarlier()">Earlier Connections</button>
+
+      <sbb-accordion>
+        <sbb-expansion-panel *ngFor="let connection of connections">
+          <sbb-expansion-panel-header class="p-2">
+            <div class="connection">
+              <sbb-icon svgIcon="{{getIcon(connection)}}" class="sbb-icon-fit"></sbb-icon>
+              <div class="info">
+                <b><span id="train_type"> {{connection.products[0]}}</span></b> Direction <span id="destination">
           {{connection.sections[0].journey.to}}
         </span>
+              </div>
+              <div class="time">
+                {{connection.from.departure | date:"HH:mm"}} - {{connection.to.arrival | date:"HH:mm"}}
+              </div>
             </div>
-            <div class="time">
-              {{connection.from.departure | date:"HH:mm"}} - {{connection.to.arrival | date:"HH:mm"}}
-            </div>
-          </div>
-        </sbb-expansion-panel-header>
-        <table class="table">
-          <thead>
-          <tr>
-            <th scope="col">Product</th>
-            <th scope="col">From</th>
-            <th scope="col">Departure</th>
-            <th scope="col">To</th>
-            <th scope="col">Arrival</th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr *ngFor="let section of connection.sections">
-            <td *ngIf="section.journey">{{section.journey.category}}{{section.journey.number}}</td>
-            <td *ngIf="section.walk">Walk</td>
-            <td>{{section.departure.station.name}}
-              <ng-container *ngIf="section.departure.platform">(Pl. {{section.departure.platform}})</ng-container>
-            </td>
-            <td>{{section.departure.departure | date:"HH:mm"}}</td>
-            <td>{{section.arrival.station.name}}
-              <ng-container *ngIf="section.arrival.platform">(Pl. {{section.arrival.platform}})</ng-container>
-            </td>
-            <td>{{section.arrival.arrival | date:"HH:mm"}}</td>
-          </tr>
-          </tbody>
-        </table>
-      </sbb-expansion-panel>
-    </sbb-accordion>
-    <button type="button" (click)="loadLater()" sbb-frameless-button>Later Connections</button>
-  </div>
-</ng-container>
+          </sbb-expansion-panel-header>
+          <table class="table">
+            <thead>
+            <tr>
+              <th scope="col">Product</th>
+              <th scope="col">From</th>
+              <th scope="col">Departure</th>
+              <th scope="col">To</th>
+              <th scope="col">Arrival</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let section of connection.sections">
+              <td *ngIf="section.journey">{{section.journey.category}}{{section.journey.number}}</td>
+              <td *ngIf="section.walk">Walk</td>
+              <td>{{section.departure.station.name}}
+                <ng-container *ngIf="section.departure.platform">(Pl. {{section.departure.platform}})</ng-container>
+              </td>
+              <td>{{section.departure.departure | date:"HH:mm"}}</td>
+              <td>{{section.arrival.station.name}}
+                <ng-container *ngIf="section.arrival.platform">(Pl. {{section.arrival.platform}})</ng-container>
+              </td>
+              <td>{{section.arrival.arrival | date:"HH:mm"}}</td>
+            </tr>
+            </tbody>
+          </table>
+        </sbb-expansion-panel>
+      </sbb-accordion>
+      <button type="button" (click)="loadLater()" sbb-frameless-button>Later Connections</button>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="connections.length == 0 && !isLoading && searchedFrom != ''">
+    <div class="container p-lg-3">
+      <sbb-alert svgIcon="disruption">No Connections found</sbb-alert>
+    </div>
+  </ng-container>
+
+
+</div>

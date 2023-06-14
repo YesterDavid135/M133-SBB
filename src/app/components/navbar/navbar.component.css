@@ -1,6 +1,16 @@
-.nav {
-  position: fixed;
-  bottom: 0px;
-  background-color: pink;
-  width: 100%;
+.navbar-nav {
+  margin-top: 10px;
+}
+
+a {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+li {
+  margin-top: 0;
+}
+
+ul {
+  margin-top: 0;
 }

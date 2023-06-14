@@ -4,6 +4,7 @@ import {Connection} from "../../Model/ConnectionApiModel";
 import {debounceTime, distinctUntilChanged, map, Observable, startWith, switchMap} from "rxjs";
 import {FormControl} from "@angular/forms";
 import {LocationsApiModel} from "../../Model/LocationsApiModel";
+import {formatDate} from "@angular/common";
 
 
 @Component({
@@ -22,7 +23,12 @@ export class ConnectionComponent implements OnInit {
 
   staticOptions: string[] = ['Basel', 'Bern', 'Luzern'];
 
+  date: Date = new Date();
+  time: string = "";
+
   ngOnInit() {
+    this.time = formatDate(new Date(), 'hh:mm', 'en-US')
+
 
     if (localStorage.getItem("searchFrom") && localStorage.getItem("searchTo")) {
       this.fromFormControl = new FormControl(localStorage.getItem("searchFrom"));
@@ -56,10 +62,11 @@ export class ConnectionComponent implements OnInit {
   }
 
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService,
+  ) {
   }
 
-  connections: Connection[] | null = null;
+  connections: Connection[] = [];
   isLoading: boolean = false;
 
   searchedFrom: string = "";
@@ -75,9 +82,9 @@ export class ConnectionComponent implements OnInit {
       localStorage.setItem('searchFrom', this.searchedFrom);
       localStorage.setItem('searchTo', this.searchedTo);
 
-      this.connections = null;
+      this.connections = [];
       this.isLoading = true;
-      this.apiService.getConnection(this.searchedFrom, this.searchedTo, 0).subscribe(data => {
+      this.apiService.getConnection(this.searchedFrom, this.searchedTo, 0, this.date, this.time).subscribe(data => {
         this.connections = data.connections;
         console.log(data.connections);
         this.isLoading = false
@@ -88,7 +95,7 @@ export class ConnectionComponent implements OnInit {
   loadEarlier() {
     this.isLoading = true;
     if (this.connections != null)
-      this.apiService.getConnection(this.searchedFrom, this.searchedTo, --this.earliestPage).subscribe(data => {
+      this.apiService.getConnection(this.searchedFrom, this.searchedTo, --this.earliestPage, this.date, this.time).subscribe(data => {
         // @ts-ignore
         this.connections = data.connections.concat(this.connections);
         console.log(this.connections);
@@ -99,7 +106,7 @@ export class ConnectionComponent implements OnInit {
   loadLater() {
     this.isLoading = true;
     if (this.connections != null)
-      this.apiService.getConnection(this.searchedFrom, this.searchedTo, ++this.newestPage).subscribe(data => {
+      this.apiService.getConnection(this.searchedFrom, this.searchedTo, ++this.newestPage, this.date, this.time).subscribe(data => {
         // @ts-ignore
         this.connections = this.connections.concat(data.connections);
         console.log(this.connections);

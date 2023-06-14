@@ -21,12 +21,17 @@ export class ApiService {
 
   }
 
-  getConnection(from: string, to: string, page: number) {
+  getConnection(from: string, to: string, page: number, date: Date, time: string) {
+
+    let dateString = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
 
     let url = "http://transport.opendata.ch/v1/connections"
       + "?from=" + from
       + "&to=" + to
-      + "&page=" + page;
+      + "&page=" + page
+      + "&date=" + dateString
+      + "&time=" + time;
+
 
     return this.http.get<ConnectionApiModel>(url);
 
