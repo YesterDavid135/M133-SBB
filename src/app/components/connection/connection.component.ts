@@ -29,13 +29,14 @@ export class ConnectionComponent implements OnInit {
   ngOnInit() {
     this.time = formatDate(new Date(), 'hh:mm', 'en-US')
 
-
+    // Read Data from Local Storage
     if (localStorage.getItem("searchFrom") && localStorage.getItem("searchTo")) {
       this.fromFormControl = new FormControl(localStorage.getItem("searchFrom"));
       this.toFormControl = new FormControl(localStorage.getItem("searchTo"));
       this.searchConnection()
     }
 
+    // Autocomplete from
     this.optionsFrom = this.fromFormControl.valueChanges.pipe(
       startWith(this.fromFormControl.value),
       debounceTime(500),
@@ -48,6 +49,7 @@ export class ConnectionComponent implements OnInit {
       map((response: LocationsApiModel) => response.stations.map(station => station.name))
     );
 
+    // Autocomplete to
     this.optionsTo = this.toFormControl.valueChanges.pipe(
       startWith(this.toFormControl.value),
       debounceTime(500),
@@ -76,7 +78,7 @@ export class ConnectionComponent implements OnInit {
   newestPage = 0;
 
   searchConnection() {
-    if (this.fromFormControl.value && this.toFormControl.value) {
+    if (this.fromFormControl.value && this.toFormControl.value) { // Validate input
       this.searchedFrom = this.fromFormControl.value;
       this.searchedTo = this.toFormControl.value;
       localStorage.setItem('searchFrom', this.searchedFrom);
@@ -92,7 +94,7 @@ export class ConnectionComponent implements OnInit {
     }
   }
 
-  loadEarlier() {
+  loadEarlier() { // Load Earlier Connections
     this.isLoading = true;
     if (this.connections != null)
       this.apiService.getConnection(this.searchedFrom, this.searchedTo, --this.earliestPage, this.date, this.time).subscribe(data => {
@@ -103,7 +105,7 @@ export class ConnectionComponent implements OnInit {
       });
   }
 
-  loadLater() {
+  loadLater() { // Load Later Connections
     this.isLoading = true;
     if (this.connections != null)
       this.apiService.getConnection(this.searchedFrom, this.searchedTo, ++this.newestPage, this.date, this.time).subscribe(data => {
@@ -114,7 +116,7 @@ export class ConnectionComponent implements OnInit {
       });
   }
 
-  getIcon(connection: Connection) {
+  getIcon(connection: Connection) { // Load Track Icon
     if (connection.from.platform) {
       if (connection.from.platform.match(/\d/)) { // @ts-ignore
         return "picto:tracks-" + connection.from.platform.match(/\d+/)[0] + "-de-small";
