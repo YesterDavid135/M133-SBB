@@ -108,6 +108,9 @@ export class MeetComponent {
           con1.sections.forEach(section1 => {
             c2.connections.forEach(con2 => {
               con2.sections.forEach(section2 => {
+                if (section1.walk || section2.walk) {
+                  return;
+                }
                 if (section1.journey.name == section2.journey.name) {
 
                   let pair: PairedConnection = {con1, con2};
