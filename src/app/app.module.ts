@@ -11,6 +11,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {SbbModule} from './sbb.module';
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
+import {MeetComponent} from "./components/meet/meet.component";
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import {HttpClientModule} from "@angular/common/http";
     AppComponent,
     NavbarComponent,
     ConnectionComponent,
-    HomeComponent
+    HomeComponent,
+    MeetComponent
   ],
   imports: [
     BrowserModule,

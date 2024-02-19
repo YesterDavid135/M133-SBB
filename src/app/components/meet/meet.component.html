@@ -1,0 +1,117 @@
+<div class="pt-4">
+  <div class="container">
+    <div class="d-flex p-2 justify-content-center">
+
+      <!--      From      -->
+      <sbb-form-field label="from1" class="px-3">
+        <input [formControl]="from1FormControl" [sbbAutocomplete]="autoFrom" sbbInput type="text"/>
+      </sbb-form-field>
+      <sbb-autocomplete #autoFrom="sbbAutocomplete">
+        <sbb-option *ngFor="let option of optionsFrom | async" [value]="option">{{ option }}</sbb-option>
+      </sbb-autocomplete>
+
+      <!--      From2      -->
+      <sbb-form-field label="from2" class="px-3">
+        <input [formControl]="from2FormControl" [sbbAutocomplete]="autoFrom" sbbInput type="text"/>
+      </sbb-form-field>
+      <sbb-autocomplete #autoFrom="sbbAutocomplete">
+        <sbb-option *ngFor="let option of optionsFrom | async" [value]="option">{{ option }}</sbb-option>
+      </sbb-autocomplete>
+
+      <!--      To      -->
+
+      <sbb-form-field label="to" class="px-3">
+        <input [formControl]="toFormControl" [sbbAutocomplete]="autoTo" sbbInput type="text"/>
+      </sbb-form-field>
+      <sbb-autocomplete #autoTo="sbbAutocomplete">
+        <sbb-option *ngFor="let option of optionsTo | async" [value]="option">{{ option }}</sbb-option>
+      </sbb-autocomplete>
+
+
+    </div>
+    <div class="d-flex p-2 justify-content-center">
+      <!--      Date      -->
+      <sbb-datepicker arrows class="mx-3">
+        <input sbbDateInput [(ngModel)]="date"/>
+      </sbb-datepicker>
+
+      <!--      Time      -->
+      <input sbbTimeInput [(ngModel)]="time" class="mx-3"/>
+
+      <!--      Button      -->
+      <button (click)="searchConnection()" type="button" sbb-button
+              [disabled]="false" class="mx-3">Search for
+        connection
+      </button>
+    </div>
+  </div>
+
+  <!--      Loading Screen      -->
+  <div class="loading">
+    <sbb-loading-indicator *ngIf="isLoading" mode="fullbox" aria-label="Loading, please wait"></sbb-loading-indicator>
+  </div>
+
+  <ng-container *ngIf="connections.length > 0">
+    <div class="container p-lg-3" *ngFor="let pair of connections">
+      From {{searchedFrom1}}
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col">Product</th>
+          <th scope="col">From</th>
+          <th scope="col">Departure</th>
+          <th scope="col">To</th>
+          <th scope="col">Arrival</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!--      Each Section of journey      -->
+        <tr *ngFor="let section of pair.con1.sections">
+          <td *ngIf="section.journey">{{section.journey.category}}{{section.journey.number}}</td>
+          <td *ngIf="section.walk">Walk</td>
+          <td>{{section.departure.station.name}}
+            <ng-container *ngIf="section.departure.platform">(Pl. {{section.departure.platform}})</ng-container>
+          </td>
+          <td>{{section.departure.departure | date:"HH:mm"}}</td>
+          <td>{{section.arrival.station.name}}
+            <ng-container *ngIf="section.arrival.platform">(Pl. {{section.arrival.platform}})</ng-container>
+          </td>
+          <td>{{section.arrival.arrival | date:"HH:mm"}}</td>
+        </tr>
+        </tbody>
+      </table>
+
+      From {{searchedFrom2}}
+      <table class="table">
+        <thead>
+        <tr>
+          <th scope="col">Product</th>
+          <th scope="col">From</th>
+          <th scope="col">Departure</th>
+          <th scope="col">To</th>
+          <th scope="col">Arrival</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!--      Each Section of journey      -->
+        <tr *ngFor="let section of pair.con2.sections">
+          <td *ngIf="section.journey">{{section.journey.category}}{{section.journey.number}}</td>
+          <td *ngIf="section.walk">Walk</td>
+          <td>{{section.departure.station.name}}
+            <ng-container *ngIf="section.departure.platform">(Pl. {{section.departure.platform}})</ng-container>
+          </td>
+          <td>{{section.departure.departure | date:"HH:mm"}}</td>
+          <td>{{section.arrival.station.name}}
+            <ng-container *ngIf="section.arrival.platform">(Pl. {{section.arrival.platform}})</ng-container>
+          </td>
+          <td>{{section.arrival.arrival | date:"HH:mm"}}</td>
+        </tr>
+        </tbody>
+      </table>
+
+      <hr>
+    </div>
+  </ng-container>
+
+</div>
+

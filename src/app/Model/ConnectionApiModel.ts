@@ -5,6 +5,11 @@ export interface ConnectionApiModel {
   stations: Stations
 }
 
+export interface PairedConnection {
+  con1: Connection;
+  con2: Connection;
+}
+
 export interface Connection {
   from: From
   to: To
